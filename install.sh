@@ -14,5 +14,5 @@ echo "DB_HOST=$DB_HOST" >> .env
 echo "DB_PORT=$DB_PORT" >> .env
 echo "DB_OUT_PORT=$DB_OUT_PORT" >> .env
 
-docker-compose up -d --build
+docker-compose up -d --build && \
 docker exec -it pc_app alembic upgrade head
