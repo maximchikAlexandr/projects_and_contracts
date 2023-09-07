@@ -1,9 +1,13 @@
+import logging
 import os
 
 from dotenv import load_dotenv
 from sqlalchemy import URL, create_engine, event
 
 load_dotenv(".env")
+
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
 
 def set_timezone(dbapi_connection, connection_record):
