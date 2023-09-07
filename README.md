@@ -35,6 +35,7 @@ POSTGRES_PASSWORD=your_database_password
 DB_HOST=postgres_db
 DB_PORT=5432
 DB_OUT_PORT=5434
+SQLALCHEMY_LOG_LEVEL=CRITICAL
 ```
 
 Создать и запустить докер контейнеры:
