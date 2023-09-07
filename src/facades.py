@@ -133,9 +133,11 @@ class ContractFacade(BaseFacade):
             select(
                 ContractModel.id.label("id договора"),
                 ContractModel.title.label("Название договора"),
-                func.to_char(ContractModel.signed, self.DATETIME_FORMAT).label(
-                    "Дата подписания договора"
-                ),
+                case(
+                    (ContractModel.signed.is_(None), "-"),
+                    else_=func.to_char(ContractModel.signed, self.DATETIME_FORMAT),
+                ).label("Дата подписания договора"),
+                ContractModel.status.label("Статус"),
                 case(
                     (ProjectModel.id.is_(None), "-"), else_=ProjectModel.id.cast(String)
                 ).label("id проекта"),
