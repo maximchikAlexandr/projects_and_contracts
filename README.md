@@ -11,6 +11,13 @@
 git clone https://github.com/maximchikAlexandr/projects_and_contracts.git
 ```
 
+Перейти в директорию с проектом
+
+```sh
+cd projects_and_contracts/
+```
+
+
 ### Linux
 
 **Установка с тестовыми параметрами БД**. Сделать исполняемым файл со скриптом 
@@ -23,7 +30,6 @@ chmod +x install.sh && ./install.sh
 **Установка с рабочими параметрами БД**. Создать файл '.env' в корневой директории:
 
 ```sh
-cd job_manager/job_manager_proj/
 nano .env
 ```
 
@@ -50,4 +56,18 @@ docker compose up -d
 
 ```sh
 docker exec -it pc_app alembic upgrade head
+```
+
+## Использование
+
+Для подключения к приложению нужно войти в докер контейнер с приложением:
+
+```sh
+docker exec -it pc_app bash
+```
+
+Для выхода из приложения:
+
+```sh
+exit
 ```
