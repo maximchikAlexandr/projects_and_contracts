@@ -6,8 +6,10 @@ from sqlalchemy import URL, create_engine, event
 
 load_dotenv(".env")
 
+
+log_level = os.getenv("SQLALCHEMY_LOG_LEVEL")
 logging.basicConfig()
-logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+logging.getLogger("sqlalchemy.engine").setLevel(getattr(logging, log_level))
 
 
 def set_timezone(dbapi_connection, connection_record):
