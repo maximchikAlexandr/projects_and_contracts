@@ -5,6 +5,14 @@
 
 ## Установка
 
+Склонировать репозиторий с GitHub:
+
+```sh
+git clone https://github.com/maximchikAlexandr/projects_and_contracts.git
+```
+
+### Linux
+
 **Установка с тестовыми параметрами БД**. Сделать исполняемым файл со скриптом 
  и запустить его:
 
@@ -12,13 +20,7 @@
 chmod +x install.sh && ./install.sh
 ```
 
-**Установка с рабочими параметрами БД**. Склонировать репозиторий с GitHub:
-
-```sh
-git clone https://github.com/maximchikAlexandr/projects_and_contracts.git
-```
-
-Создать файл '.env' в корневой директории:
+**Установка с рабочими параметрами БД**. Создать файл '.env' в корневой директории:
 
 ```sh
 cd job_manager/job_manager_proj/
