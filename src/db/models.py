@@ -1,9 +1,8 @@
 import enum
 
-from sqlalchemy import TIMESTAMP, Column, Enum, ForeignKey, Integer, String, DateTime
+from sqlalchemy import TIMESTAMP, Column, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import text
-
 
 Base = declarative_base()
 
@@ -20,7 +19,9 @@ class ProjectModel(Base):
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     title = Column(String, nullable=False)
     created = Column(TIMESTAMP, nullable=False, default=text("CURRENT_TIMESTAMP"))
-    contract = relationship("ContractModel", back_populates="project", passive_deletes=True)
+    contract = relationship(
+        "ContractModel", back_populates="project", passive_deletes=True
+    )
 
 
 class ContractModel(Base):
@@ -31,5 +32,5 @@ class ContractModel(Base):
     created = Column(TIMESTAMP, nullable=False, default=text("CURRENT_TIMESTAMP"))
     signed = Column(TIMESTAMP, nullable=True)
     status = Column(String, Enum(StatusEnum), default=StatusEnum.draft)
-    project_id = Column(Integer, ForeignKey("project.id", ondelete='SET NULL'))
+    project_id = Column(Integer, ForeignKey("project.id", ondelete="SET NULL"))
     project = relationship("ProjectModel", back_populates="contract")
