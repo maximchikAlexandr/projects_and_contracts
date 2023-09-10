@@ -110,7 +110,7 @@ class ContractFacade(BaseFacade):
     def get_unlinked_active_contracts(self) -> list[dict[str, str]]:
         query: Select = (
             select(
-                cast(ContractModel.id, String),
+                cast(ContractModel.id, String).label("id договора"),
                 ContractModel.title.label("Название договора"),
                 func.to_char(ContractModel.created, self.DATETIME_FORMAT).label(
                     "Дата создания"
@@ -137,12 +137,13 @@ class ContractFacade(BaseFacade):
                 func.to_char(ContractModel.signed, self.DATETIME_FORMAT).label(
                     "Дата подписания договора"
                 ),
-                ProjectModel.id.label("id проекта"),
+                ContractModel.status.label("Статус"),
+                cast(ProjectModel.id, String).label("id проекта"),
                 ProjectModel.title.label("Название проекта"),
             )
             .join(ProjectModel, ProjectModel.id == ContractModel.project_id)
             .filter(ContractModel.status == StatusEnum.active)
-            .order_by("id")
+            .order_by(ContractModel.id)
         )
         cursor: CursorResult = self.connection.execute(query)
         return cursor.mappings().all()
@@ -165,7 +166,7 @@ class ContractFacade(BaseFacade):
                 ).label("Название проекта"),
             )
             .outerjoin(ProjectModel, ProjectModel.id == ContractModel.project_id)
-            .order_by("id договора")
+            .order_by(ContractModel.id)
         )
         cursor: CursorResult = self.connection.execute(query)
         return cursor.mappings().all()

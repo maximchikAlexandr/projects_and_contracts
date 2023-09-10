@@ -1,9 +1,7 @@
-from cleo.commands.command import Command
-
-from src.commands.base import CreateEntityCommand, RenderTableMixin
+from src.commands.base import CreateEntityCommand, Command
 from src.db.settings import EngineDB
 from src.facades import ContractFacade, ProjectFacade
-from src.commands.options import project_title, contract_id_opt, project_id_opt
+from src.commands import project_title, contract_id_opt, project_id_opt
 
 engine_db = EngineDB()
 contract_facade = ContractFacade(engine_db=engine_db)
@@ -17,7 +15,7 @@ class CreateProjectCommand(CreateEntityCommand):
     options = [project_title]
 
 
-class ListProjectCommand(RenderTableMixin, Command):
+class ListProjectCommand(Command):
     name = "ls"
     description = "Выводит список проектов"
 
@@ -31,15 +29,15 @@ class ListProjectCommand(RenderTableMixin, Command):
             )
 
 
-class AddContractCommand(RenderTableMixin, Command):
+class AddContractCommand(Command):
     name = "addcontract"
     description = "Добавляет договор к проекту"
     options = [project_id_opt, contract_id_opt]
 
     def handle(self) -> None:
-        activate_contracts = contract_facade.get_unlinked_active_contracts()
+        active_contracts = contract_facade.get_unlinked_active_contracts()
 
-        if not activate_contracts:
+        if not active_contracts:
             self.line(
                 "<error> Нельзя начать заполнять проект без существования хотя бы одного "
                 "активного договора</error>"
@@ -56,10 +54,7 @@ class AddContractCommand(RenderTableMixin, Command):
             )
             project_id = self.ask(question)
 
-        if not project_facade.is_existing(project_id):
-            self.line(
-                "<error>Проект с таким id (идентификатором) не существует</error>"
-            )
+        if not self.is_valid_model_id(project_facade, project_id):
             return
 
         if project_facade.has_active_contracts(project_id):
@@ -71,16 +66,13 @@ class AddContractCommand(RenderTableMixin, Command):
         if self.option("contract_id"):
             contract_id = self.option("contract_id")
         else:
-            self.render_custom_table(activate_contracts)
+            self.render_custom_table(active_contracts)
             question = self.create_question(
                 "Введите id (идентификатор) договора для добавления к проекту: "
             )
             contract_id = self.ask(question)
 
-        if not contract_facade.is_existing(contract_id):
-            self.line(
-                "<error>Договор с таким id (идентификатором) не существует</error>"
-            )
+        if not self.is_valid_model_id(contract_facade, contract_id):
             return
 
         if not contract_facade.is_active(contract_id):
@@ -106,10 +98,7 @@ class CompleteActiveContractCommand(Command):
             )
             project_id = self.ask(question)
 
-        if not project_facade.is_existing(project_id):
-            self.line(
-                "<error>Проект с таким id (идентификатором) не существует</error>"
-            )
+        if not self.is_valid_model_id(project_facade, project_id):
             return
 
         if not project_facade.has_active_contracts(project_id):
