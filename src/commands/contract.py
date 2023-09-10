@@ -1,9 +1,7 @@
-from cleo.commands.command import Command
-
 from src.db.settings import EngineDB
 from src.facades import ContractFacade, ProjectFacade
-from src.commands.base import CreateEntityCommand, RenderTableMixin
-from src.commands.options import contract_title, contract_id_opt, project_id_opt
+from src.commands.base import CreateEntityCommand, Command
+from src.commands import contract_title, contract_id_opt
 
 engine_db = EngineDB()
 contract_facade = ContractFacade(engine_db=engine_db)
@@ -17,7 +15,7 @@ class CreateContractCommand(CreateEntityCommand):
     options = [contract_title]
 
 
-class ListContractCommand(RenderTableMixin, Command):
+class ListContractCommand(Command):
     name = "ls"
     description = "Выводит список договоров"
 
@@ -45,10 +43,7 @@ class ActivateContractCommand(Command):
             )
             contract_id = self.ask(question)
 
-        if not contract_facade.is_existing(contract_id):
-            self.line(
-                "<error>Договор с таким id (идентификатором) не существует</error>"
-            )
+        if not self.is_valid_model_id(contract_facade, contract_id):
             return
 
         if contract_facade.is_active(contract_id):
@@ -69,20 +64,19 @@ class CompleteContractCommand(Command):
         if self.option("contract_id"):
             contract_id = self.option("contract_id")
         else:
+            data = contract_facade.get_linked_active_contracts()
+            self.render_custom_table(data)
             question = self.create_question(
                 "Введите id (идентификатор) договора для завершения: "
             )
             contract_id = self.ask(question)
 
-        if not contract_facade.is_existing(contract_id):
-            self.line(
-                "<error>Договор с таким id (идентификатором) не существует</error>"
-            )
+        if not self.is_valid_model_id(contract_facade, contract_id):
             return
 
         if not contract_facade.is_active(contract_id):
             self.line(
-                f"<error>Можно завершить подтвержденный договор</error>"
+                f"<error>Можно завершить только подтвержденный договор</error>"
             )
             return
 

@@ -33,8 +33,8 @@ class EngineDB:
     )
     __instance = None
 
-    def __new__(cls) -> Engine:
+    def __new__(cls) -> "EngineDB":
         if cls.__instance is None:
-            cls.__instance: Engine = create_engine(url=cls.url_obj)
+            cls.__instance: "EngineDB" = create_engine(url=cls.url_obj)
             event.listen(cls.__instance, "connect", set_timezone)
         return cls.__instance
